@@ -1,0 +1,6 @@
+@TramAnh_WMS_HostAddress = http://localhost:5107
+
+GET {{TramAnh_WMS_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
