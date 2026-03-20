@@ -13,7 +13,7 @@ namespace TramAnh_WMS.Controllers
 
         public PickBatchesController(AppDbContext context) { _context = context; }
 
-        // LOGIC: GOM TẤT CẢ ĐƠN HÀNG "NEW" THÀNH 1 BATCH MỚI
+        //  GOM TẤT CẢ ĐƠN HÀNG "NEW" THÀNH 1 BATCH MỚI
         [HttpPost("CreateBatch")]
         public async Task<ActionResult<PickBatch>> CreateBatch(int staffId)
         {
@@ -46,7 +46,7 @@ namespace TramAnh_WMS.Controllers
             return Ok(newBatch);
         }
 
-        // LOGIC: XUẤT DANH SÁCH TỔNG HỢP CẦN NHẶT (Sắp xếp theo Vị trí kho)
+        //  XUẤT DANH SÁCH TỔNG HỢP CẦN NHẶT (Sắp xếp theo Vị trí kho)
         [HttpGet("GetPickingList/{batchId}")]
         public async Task<IActionResult> GetPickingList(int batchId)
         {
