@@ -1,7 +1,6 @@
 ﻿namespace TramAnh_WMS.Controllers
 {
-    public class InventoryController
+    public class PickBatchesController
     {
-
     }
 }
