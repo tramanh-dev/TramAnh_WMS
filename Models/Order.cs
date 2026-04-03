@@ -18,11 +18,11 @@ namespace TramAnh_WMS.Models
         public int? BatchId { get; set; } // Cho phép Null khi đơn hàng chưa được gom
 
         [ForeignKey("StoreId")]
-        public virtual Store Store { get; set; }
+        public virtual Store? Store { get; set; }
 
         [ForeignKey("BatchId")]
-        public virtual PickBatch PickBatch { get; set; }
+        public virtual PickBatch? PickBatch { get; set; }
 
-        public virtual ICollection<OrderItem> OrderItems { get; set; }
+        public virtual ICollection<OrderItem>? OrderItems { get; set; }
     }
 }

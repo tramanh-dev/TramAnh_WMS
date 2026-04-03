@@ -13,5 +13,7 @@ namespace TramAnh_WMS.Models
 
         // Một vị trí có thể chứa thông tin tồn kho của sản phẩm
         public virtual ICollection<Inventory> Inventories { get; set; }
+ 
+        public string LocationCode => $"{Aisle}-{Shelf}-{Level}";
     }
 }

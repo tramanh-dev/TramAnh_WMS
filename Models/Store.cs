@@ -13,6 +13,6 @@ namespace TramAnh_WMS.Models
         public string Address { get; set; }
 
         // Liên kết: Một cửa hàng có nhiều đơn hàng
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Order>? Orders { get; set; }
     }
 }

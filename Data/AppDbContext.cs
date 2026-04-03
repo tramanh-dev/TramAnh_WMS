@@ -14,6 +14,7 @@ namespace TramAnh_WMS.Data
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<StorageLocation> StorageLocations { get; set; }
         public DbSet<Store> Stores { get; set; }
+        public DbSet<Staff> Staff { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<PickBatch> PickBatches { get; set; }

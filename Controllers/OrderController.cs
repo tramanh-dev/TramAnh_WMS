@@ -16,14 +16,13 @@ namespace TramAnh_WMS.Controllers
             _context = context;
         }
 
-        // 1. LẤY DANH SÁCH ĐƠN HÀNG
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
             return await _context.Orders.Include(o => o.Store).ToListAsync();
         }
 
-        // 2. TẠO ĐƠN HÀNG MỚI + LOGIC TRỪ KHO
         [HttpPost]
         public async Task<ActionResult<Order>> PostOrder(Order order)
         {
@@ -65,7 +64,6 @@ namespace TramAnh_WMS.Controllers
             }
         }
 
-        // 3. XÁC NHẬN NHẶT XONG HÀNG (Cập nhật Quantity_Picked & Trừ tồn thực tế)
         [HttpPut("ConfirmPicked/{id}")]
         public async Task<IActionResult> ConfirmPicked(int id, List<OrderItem> pickedItems)
         {

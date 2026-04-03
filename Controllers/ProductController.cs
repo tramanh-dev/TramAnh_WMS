@@ -16,16 +16,14 @@ namespace TramAnh_WMS.Controllers
             _context = context;
         }
 
-        // 1. LẤY DANH SÁCH SẢN PHẨM (GET)
-        // URL: api/Products
+        // GET
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             return await _context.Products.Include(p => p.Category).ToListAsync();
         }
 
-        // 2. LẤY CHI TIẾT 1 SẢN PHẨM (GET by ID)
-        // URL: api/Products/5
+        // GET by ID
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
@@ -37,7 +35,7 @@ namespace TramAnh_WMS.Controllers
             return product;
         }
 
-        // 3. THÊM MỚI SẢN PHẨM (POST)
+        // POST
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
@@ -47,7 +45,7 @@ namespace TramAnh_WMS.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = product.ProductId }, product);
         }
 
-        // 4. CẬP NHẬT SẢN PHẨM (PUT)
+        // PUT
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
@@ -68,7 +66,7 @@ namespace TramAnh_WMS.Controllers
             return NoContent();
         }
 
-        // 5. XÓA SẢN PHẨM (DELETE)
+        // DELETE
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
@@ -80,5 +78,20 @@ namespace TramAnh_WMS.Controllers
 
             return NoContent();
         }
+
+        // GET: api/Product/search?name=Gấu
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Product>>> SearchProduct(string name)
+        {
+            // Tìm những sản phẩm có tên chứa từ khóa (không phân biệt hoa thường)
+            var result = await _context.Products
+                .Where(p => p.Name.Contains(name))
+                .ToListAsync();
+
+            return Ok(result);
+        }
     }
+
+
+
 }

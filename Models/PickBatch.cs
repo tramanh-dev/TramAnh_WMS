@@ -15,9 +15,9 @@ namespace TramAnh_WMS.Models
         public string Status { get; set; } // New, Picking, Completed
 
         [ForeignKey("StaffId")]
-        public virtual Staff Staff { get; set; }
+        public virtual Staff? Staff { get; set; }
 
         // Một Batch chứa nhiều đơn hàng (Gom đơn)
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Order>? Orders { get; set; }
     }
 }

@@ -12,7 +12,8 @@ namespace TramAnh_WMS.Models
 
         public string Role { get; set; } // Admin, Warehouse, StoreManager
 
+
         // Liên kết: Một nhân viên có thể phụ trách nhiều đợt gom hàng (Batch)
-        public virtual ICollection<PickBatch> PickBatches { get; set; }
+        public virtual ICollection<PickBatch>? PickBatches { get; set; }
     }
 }
