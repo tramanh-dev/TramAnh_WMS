@@ -10,6 +10,9 @@ namespace TramAnh_WMS
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+            builder.WebHost.UseUrls($"http://*:{port}");
+
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(connectionString));
@@ -21,32 +24,30 @@ namespace TramAnh_WMS
                 });
 
             builder.Services.AddEndpointsApiExplorer();
-
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "NguyenThiTramAnh_2123110496", 
-                    Version = "v1",
-                    Description = "Đồ án Quản lý kho (WMS) - API Documentation"
+                    Title = "NguyenThiTramAnh_2123110496",
+                    Version = "v1"
                 });
             });
 
             var app = builder.Build();
 
+            // Mở khóa Swagger cho mọi môi trường
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "NguyenThiTramAnh_2123110496 V1");
-                c.RoutePrefix = string.Empty;
+                c.RoutePrefix = string.Empty; 
                 c.DocumentTitle = "NguyenThiTramAnh_2123110496";
             });
-
-            // app.UseHttpsRedirection();
 
             app.UseAuthorization();
             app.MapControllers();
 
+            // Tự động chạy Migration
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
