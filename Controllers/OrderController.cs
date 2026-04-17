@@ -20,11 +20,7 @@ namespace TramAnh_WMS.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
-            return await _context.Orders
-                .Include(o => o.Store)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Product)
-                .ToListAsync();
+            return await _context.Orders.ToListAsync();
         }
 
         [HttpPost]
@@ -59,9 +55,9 @@ namespace TramAnh_WMS.Controllers
             try
             {
                 var order = await _context.Orders
-                    .Include(o => o.OrderItems)
-                        .ThenInclude(oi => oi.Product)
-                    .FirstOrDefaultAsync(o => o.OrderId == id);
+                  .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                  .FirstOrDefaultAsync(o => o.OrderId == id);
 
                 if (order?.OrderItems == null)
                     return BadRequest("Order không có items");
@@ -75,7 +71,7 @@ namespace TramAnh_WMS.Controllers
                         return BadRequest($"Sai số lượng product {item.ProductId}");
 
                     var inventory = await _context.Inventories
-                        .FirstOrDefaultAsync(i => i.ProductId == item.ProductId);
+                      .FirstOrDefaultAsync(i => i.ProductId == item.ProductId);
 
                     if (inventory == null || inventory.QuantityOnHand < item.QuantityPicked)
                         return BadRequest($"Không đủ kho product {item.ProductId}");
