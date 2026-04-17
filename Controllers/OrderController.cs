@@ -20,18 +20,35 @@ namespace TramAnh_WMS.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
-            return await _context.Orders.Include(o => o.Store).ToListAsync();
+            return await _context.Orders
+                .Include(o => o.Store)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .ToListAsync();
         }
+
         [HttpPost]
-        public async Task<ActionResult<Order>> PostOrder(Order order)
+        public async Task<ActionResult> PostOrder(Order order)
         {
-            order.Status = "New";
-            order.TotalAmount = 0;
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            try
+            {
+                order.Status = "New";
+                order.TotalAmount = 0;
 
-            return Ok(new { orderId = order.OrderId });
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                return Ok(new { orderId = order.OrderId });
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpPut("ConfirmPicked/{id}")]
@@ -43,31 +60,27 @@ namespace TramAnh_WMS.Controllers
             {
                 var order = await _context.Orders
                     .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Product)
                     .FirstOrDefaultAsync(o => o.OrderId == id);
 
-                if (order == null) return NotFound();
+                if (order?.OrderItems == null)
+                    return BadRequest("Order không có items");
 
                 foreach (var item in pickedItems)
                 {
                     var dbItem = order.OrderItems.FirstOrDefault(oi => oi.ProductId == item.ProductId);
                     if (dbItem == null) continue;
 
-                    // ❗ Check hợp lệ
                     if (item.QuantityPicked < 0 || item.QuantityPicked > dbItem.QuantityOrdered)
-                    {
-                        return BadRequest(new { message = $"Số lượng pick không hợp lệ cho sản phẩm {item.ProductId}" });
-                    }
-
-                    dbItem.QuantityPicked = item.QuantityPicked;
+                        return BadRequest($"Sai số lượng product {item.ProductId}");
 
                     var inventory = await _context.Inventories
                         .FirstOrDefaultAsync(i => i.ProductId == item.ProductId);
 
                     if (inventory == null || inventory.QuantityOnHand < item.QuantityPicked)
-                    {
-                        return BadRequest(new { message = $"Kho không đủ hàng để xuất cho sản phẩm {item.ProductId}" });
-                    }
+                        return BadRequest($"Không đủ kho product {item.ProductId}");
 
+                    dbItem.QuantityPicked = item.QuantityPicked;
                     inventory.QuantityOnHand -= item.QuantityPicked;
                 }
 
@@ -76,12 +89,12 @@ namespace TramAnh_WMS.Controllers
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return Ok(new { message = "Đã xác nhận nhặt hàng xong!" });
+                return Ok(new { message = "OK" });
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, new { message = "Lỗi server: " + ex.Message });
+                return StatusCode(500, ex.Message);
             }
         }
     }
