@@ -10,7 +10,7 @@ namespace TramAnh_WMS
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+            var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
             builder.WebHost.UseUrls($"http://*:{port}");
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -33,7 +33,19 @@ namespace TramAnh_WMS
                 });
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             var app = builder.Build();
+
+            app.UseCors("AllowAll");
 
             // Mở khóa Swagger cho mọi môi trường
             app.UseSwagger();
