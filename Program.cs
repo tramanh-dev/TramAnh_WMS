@@ -45,21 +45,19 @@ namespace TramAnh_WMS
 
             var app = builder.Build();
 
-            app.UseCors("AllowAll");
-
-            // Mở khóa Swagger cho mọi môi trường
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "NguyenThiTramAnh_2123110496 V1");
-                c.RoutePrefix = string.Empty; 
+                c.RoutePrefix = string.Empty;
                 c.DocumentTitle = "NguyenThiTramAnh_2123110496";
             });
+
+            app.UseCors("AllowAll");
 
             app.UseAuthorization();
             app.MapControllers();
 
-            // Tự động chạy Migration
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
