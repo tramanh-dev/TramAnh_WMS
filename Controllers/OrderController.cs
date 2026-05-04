@@ -20,7 +20,9 @@ namespace TramAnh_WMS.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
-            return await _context.Orders.ToListAsync();
+            return await _context.Orders
+                    .Include(o => o.OrderItems)
+                    .ToListAsync();
         }
 
         [HttpPost]
